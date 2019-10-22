@@ -70,6 +70,6 @@ Creates a shortcup that execute:
 
 - Install extension [Settings Sync](https://marketplace.visualstudio.com/items?itemName=Shan.code-settings-sync)
 
-### INstall npm global packages if npm is available
+### Install npm global packages if npm is available
 
 ## Run CCleaner if available
