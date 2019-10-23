@@ -11,6 +11,15 @@
 
 👍 If you wish to contribute to this project, don't hesitate, I'll review any PR.
 
+# Get started
+
+1. Run the following command in a `cmd` shell:
+
+```cmd
+powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://github.com/neilime/easy-win-setup/releases/latest/download/install.ps1'))"
+```
+2. A few seconds later, EasyWinSetup should be running. All you have to do is follow its questions
+
 # Download
 
 📥 https://github.com/neilime/easy-win-setup/releases
