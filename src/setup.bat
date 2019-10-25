@@ -3,6 +3,8 @@ cls
 
 set batdir=%~dp0
 set cliCmd=%batdir%lib\cli.bat
+set initialSetup=%batdir%lib\initial-setup.bat
+set optimizerCmd=%batdir%lib\optimizer.bat
 set cleanerCmd=%batdir%lib\cleaner.bat
 set driverCloudCmd=%batdir%lib\driver-cloud.bat
 set chocolateyCmd=%batdir%lib\chocolatey.bat
@@ -13,79 +15,104 @@ set vscodeCmd=%batdir%lib\vscode.bat
 rem Print banner
 call %cliCmd% banner
 
+set userAnswer=
+call %cliCmd% dirPrompt "If you want to use a custom configuration, please give the configuration directory path"
+if "%userAnswer%" == "" (
+    call %cliCmd% info "No custom configuration path given, default configuration will be used"
+    set configDir=
+) else (
+    set configDir=%userAnswer%
+    call %cliCmd% info "Custom configuration '%userAnswer%' will be used"
+)
+
 rem Drivers update
 call %cliCmd% section "Drivers update"
 
 rem Run Driver Cloud update
+set errorlevel=
 call %cliCmd% confirmPrompt "You should update your drivers, do you want to run Driver Cloud"
-if !ERRORLEVEL! equ 0 (
+if %errorlevel% equ 0 (
     call %driverCloudCmd% executeDriverCloud
 )
+
+rem Execute initial setup
+set errorlevel=
+call %cliCmd% confirmPrompt "Do you want to execute initial setup"
+if %errorlevel% equ 0 (
+    call %initialSetup% executeInitialSetup %configDir%
+)
+
+rem Execute optimizer
+rem call %cliCmd% section "Optimizer"
+rem set errorlevel=
+rem call %cliCmd% confirmPrompt "Do you want to execute Optimizer"
+rem if %errorlevel% equ 0 (
+rem     call %optimizerCmd% executeOptimizer
+rem )
 
 call %cliCmd% section "Cleaner"
 
 rem Uninstall useless softwares
+set errorlevel=
 call %cliCmd% confirmPrompt "Do you want to uninstall softwares"
-if !ERRORLEVEL! equ 0 (
+if %errorlevel% equ 0 (
     call %cleanerCmd% uninstallSoftwares
 )
 rem Uninstall useless startup entries
+set errorlevel=
 call %cliCmd% confirmPrompt "Do you want to delete startup entries"
-if !ERRORLEVEL! equ 0 (
+if %errorlevel% equ 0 (
     call %cleanerCmd% deleteStartupEntries
 )
 
 rem Run Chocolatey install
 call %cliCmd% section "Package manager (Chocolatey)"
+set errorlevel=
 call %cliCmd% confirmPrompt "Do you want to install Chocolatey packages"
-if !ERRORLEVEL! equ 0 (
-    call %chocolateyCmd% executeChocolatey
+if %errorlevel% equ 0 (
+    call %chocolateyCmd% executeChocolatey %configDir%
 )
 
 rem Customization of UI
 call %cliCmd% section "Customize interface"
 
-rem Dark mode
-call %cliCmd% confirmPrompt "Do you want to enable Dark mode"
-if !ERRORLEVEL! equ 0 (
-    call %interfaceCmd% enableDarkMode
-)
-
-rem Display of file extensions
-call %cliCmd% confirmPrompt "Do you want to enable the display of file extensions"
-if !ERRORLEVEL! equ 0 (
-    call %interfaceCmd% enableDisplayFileExtensions
-)
-
 rem Create desktop folders
+set errorlevel=
 call %cliCmd% confirmPrompt "Do you want to create desktop folders"
-if !ERRORLEVEL! equ 0 (
-    call %interfaceCmd% createDesktopDirFolders
+if %errorlevel% equ 0 (
+    call %interfaceCmd% createDesktopDirFolders %configDir%
 )
 
 rem Create desktop "Maintenance" shortcut
+set errorlevel=
 call %cliCmd% confirmPrompt "Do you want to create a 'Maintenance' shortcut"
-if !ERRORLEVEL! equ 0 (
+if %errorlevel% equ 0 (
     call %interfaceCmd% createMaintenanceShortcut
 )
 
 call %cliCmd% section "Dev configuration"
 
 rem configure VSCode
+set errorlevel=
 call %vscodeCmd% vscodeExists
-if !ERRORLEVEL! equ 0 (
+if %errorlevel% equ 0 (
+
+    set errorlevel=
     call %cliCmd% confirmPrompt "Do you want to configure VSCode"
-    if !ERRORLEVEL! equ 0 (
+    if %errorlevel% equ 0 (
         call %vscodeCmd% configureVSCode
     )
 )
 
 rem Add npm global packages if npm is available
+set errorlevel=
 call %nodejsCmd% npmExists
-if !ERRORLEVEL! equ 0 (
+if %errorlevel% equ 0 (
+
+    set errorlevel=
     call %cliCmd% confirmPrompt "Do you want to install npm global packages"
-    if !ERRORLEVEL! equ 0 (
-        call %nodejsCmd% installGlobalNpmPackages
+    if %errorlevel% equ 0 (
+        call %nodejsCmd% installGlobalNpmPackages %configDir%
     )
 )
 
@@ -93,7 +120,7 @@ rem Run CCleaner if available
 call %cleanerCmd% executeCCleaner
 
 rem restart explorer
-rem call %interfaceCmd% restartExplorer
+call %interfaceCmd% restartExplorer
 
 rem End of setup
 echo.

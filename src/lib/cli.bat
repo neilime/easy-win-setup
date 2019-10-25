@@ -10,9 +10,9 @@ if "%~1" neq "" (
     shift /1
     goto %1
   ) || (
-    >&2 call %cliCmd% error "Function %~1 not found in %batfile%"
+    >&2 call :error "Function %~1 not found in %batfile%"
   )
-) else >&2 call %cliCmd% error "No function name was given to %batfile%"
+) else >&2 call :error "No function name was given to %batfile%"
 exit /b
 
 :banner
@@ -30,13 +30,11 @@ exit /b
 
 :section
     echo.
-    echo.
     echo  [93m[ [4m%~1[0m[93m ][0m
     echo.
     exit /b
 
 :waiting
-    echo.
     call :processing %1
     pause >nul
     exit /b
@@ -52,10 +50,19 @@ exit /b
     set "message=[92m[x][0m %message%!"
     echo %message%&exit /b
 
+:info
+    set "message=%~1"
+    set "message=[93m[-][0m %message%"
+    echo %message%&exit /b
+
 :error
     set "message=%~1"
-    set "message=[91m/^^!^\ %message% [0m"
-    echo.&echo %message%&echo.
+    set "message=[91m/^!^\ %message% [0m"
+    echo.&echo %message%&echo.&exit /b
+
+:fatalError
+    set "message=%~1"
+    call :error %1
     echo Press any key to exit...
     pause >nul
     goto :halt
@@ -116,8 +123,51 @@ exit /b
         exit /b 4
     )
     endLocal
+    set errorlevel=
     call :confirmPrompt %1 %2
-    exit /b %ERRORLEVEL%
+    exit /b %errorlevel%
+  
+:filePrompt
+    set userAnswer=
+    setlocal EnableDelayedExpansion
+    set "question=%~1: "
+    call :prompt "^!question^!"
+    if not "%userAnswer%" == "" (
+        if not exist "%userAnswer%" (
+            set safePath="%userAnswer%"
+            call :error "Given path ^!safePath^! does not exist"
+            endLocal
+            set errorlevel=
+            set userAnswer=
+            call :filePrompt %1
+            exit /b %errorlevel%
+        )
+    ) else if not [%2]==[] (
+        call :error "A file path is required"
+        call :filePrompt %1 %2
+    )
+
+    endLocal & set userAnswer=%userAnswer%
+    exit /b
+
+:dirPrompt
+    set userAnswer=
+    setlocal EnableDelayedExpansion
+    set "question=%~1"
+    call :filePrompt "^!question^!" %2
+    if not "%userAnswer%" == "" (
+        if not exist %userAnswer%\nul (
+            set safePath="%userAnswer%"
+            call :Error "Given path ^!safePath^! is not a directory"
+            endLocal
+            set errorlevel=
+            set userAnswer=
+            call :dirPrompt %1 %2
+            exit /b %errorlevel%
+        )
+    )
+    endLocal & set userAnswer=%userAnswer%
+    exit /b
 
 :cmdExists
     setlocal EnableDelayedExpansion
@@ -160,6 +210,17 @@ exit /b
     endLocal
     exit /b
 
+:resolvePath
+    set %1=%~dpfn2
+    exit /b
+
+:safeMkdir
+    @echo off
+    setlocal EnableDelayedExpansion
+    set "dir=%~1"
+    if not exist "!dir!" mkdir "!dir!"
+    endLocal
+    exit /b
 :halt
 call :haltHelper 2> nul
 

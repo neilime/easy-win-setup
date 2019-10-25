@@ -2,6 +2,7 @@ rem Cleaner action functions
 @echo off
 
 set batdir=%~dp0
+set batfile=%0
 set cliCmd=%batdir%cli.bat
 set ccleanerExePath="%programfiles%\CCleaner\ccleaner.exe"
 
@@ -10,9 +11,9 @@ if "%~1" neq "" (
     shift /1
     goto %1
   ) || (
-    >&2 call %cliCmd% error "Function %~1 not found in %batfile%"
+    >&2 call %cliCmd% fatalError "Function %~1 not found in %batfile%"
   )
-) else >&2 call %cliCmd% error "No function name was given to %batfile%"
+) else >&2 call %cliCmd% fatalError "No function name was given to %batfile%"
 exit /b
 
 :uninstallSoftwares
@@ -22,8 +23,9 @@ exit /b
     for /F "skip=2 tokens=2-3 delims=," %%a in ('wmic product get name^,version /format:csv') do (
         set name=%%a
 
+        set errorlevel=
         call %cliCmd% confirmPrompt "Do you want to uninstall ^!name^!",n
-        if !ERRORLEVEL!==0 (
+        if !errorlevel!==0 (
             call :uninstallSoftware "^!name^!"
         )
     )
@@ -71,8 +73,9 @@ exit /b
             ) else if not defined location (
                 set shouldCall=
             ) else (
+                set errorlevel=
                 call %cliCmd% confirmPrompt "Do you want to delete startup entry ^!caption^!",n
-                if !ERRORLEVEL!==0 (
+                if !errorlevel!==0 (
                     call :deleteStartupEntry "^!caption^!", "^!command^!", "^!location^!"
                 )
                 set caption=

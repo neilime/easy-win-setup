@@ -4,6 +4,7 @@ rem Chocolatey action functions
 set batdir=%~dp0
 set batfile=%0
 set cliCmd=%batdir%cli.bat
+set configCmd=%batdir%config.bat
 set chocolateyInstallUrl=https://chocolatey.org/install.ps1
 
 if "%~1" neq "" (
@@ -11,9 +12,9 @@ if "%~1" neq "" (
     shift /1
     goto %1
   ) || (
-    >&2 call %cliCmd% error "Function %~1 not found in %batfile%"
+    >&2 call %cliCmd% fatalError "Function %~1 not found in %batfile%"
   )
-) else >&2 call %cliCmd% error "No function name was given to %batfile%"
+) else >&2 call %cliCmd% fatalError "No function name was given to %batfile%"
 exit /b
 
 :executeChocolatey
@@ -30,21 +31,14 @@ exit /b
         call %cliCmd% success "Chocolatey has been installed"
     )
 
+    set configPath=
+    call %configCmd% useConfig "chocolatey" %1    
+
     rem Install Chocolatey packages
-    set userAnswer=
-    call %cliCmd% prompt "If you want to install packages, please give the chocolatey config path: "
-    if "%userAnswer%" == "" (
-        call %cliCmd% success "No chocolatey config path given"
-    ) else (
-        call %cliCmd% processing "Installing Chocolatey packages from config file ^!userAnswer^!"
-        if exist !userAnswer! (
-            call %cliCmd% execCmd "choco install --confirm --packages ^!userAnswer^!"
-            echo .
-            call %cliCmd% success "Installation of Chocolatey packages is done"
-        ) else (
-            call %cliCmd% error "Config file ^!userAnswer^! does not exist"
-        )
-    )
+    call %cliCmd% processing "Installing Chocolatey packages from config file ^!configPath^!"
+    call %cliCmd% execCmd "choco install --confirm --packages ^!configPath^!"
+    echo .
+    call %cliCmd% success "Installation of Chocolatey packages is done"
 
     endlocal
     exit /b

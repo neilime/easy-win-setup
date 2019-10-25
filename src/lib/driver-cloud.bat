@@ -15,9 +15,9 @@ if "%~1" neq "" (
     shift /1
     goto %1
   ) || (
-    >&2 call %cliCmd% error "Function %~1 not found in %batfile%"
+    >&2 call %cliCmd% fatalError "Function %~1 not found in %batfile%"
   )
-) else >&2 call %cliCmd% error "No function name was given to %batfile%"
+) else >&2 call %cliCmd% fatalError "No function name was given to %batfile%"
 exit /b
 
 :executeDriverCloud

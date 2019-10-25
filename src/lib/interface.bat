@@ -4,6 +4,7 @@ rem Interface action functions
 set batdir=%~dp0
 set batfile=%0
 set cliCmd=%batdir%cli.bat
+set configCmd=%batdir%config.bat
 set cleanerCmd=%batdir%cleaner.bat
 
 if "%~1" neq "" (
@@ -11,75 +12,56 @@ if "%~1" neq "" (
     shift /1
     goto %1
   ) || (
-    >&2 call %cliCmd% error "Function %~1 not found in %batfile%"
+    >&2 call %cliCmd% fatalError "Function %~1 not found in %batfile%"
   )
-) else >&2 call %cliCmd% error "No function name was given to %batfile%"
+) else >&2 call %cliCmd% fatalError "No function name was given to %batfile%"
 exit /b
 
 :restartExplorer
     call %cliCmd% processing "Restarting explorer"
-    call %cliCmd% execCmd "taskkill /im explorer.exe /f">nul
-    timeout 2>nul
-    call %cliCmd% execCmd "start explorer.exe">nul
+    call %cliCmd% execPowershellCmd "Stop-Process -ProcessName explorer"
     call %cliCmd% success "Explorer has been restarted"
-
-:enableDarkMode
-    setlocal EnableDelayedExpansion
-
-    call %cliCmd% processing "Enable dark mode"
-    call %cliCmd% execCmd "REG ADD HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize /v AppsUseLightTheme /t REG_DWORD /d 00000000 /f">nul
-    call %cliCmd% success "Dark mode has been setted"
-
-    endlocal
-    exit /b
-
-:enableDisplayFileExtensions
-    setlocal EnableDelayedExpansion
-
-    call %cliCmd% processing "Enable the display of file extensions"
-    call %cliCmd% execCmd "REG ADD HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced /v HideFileExt /t REG_DWORD /d 0 /f">nul
-    call %cliCmd% success "Display file extensions has been setted"
-
-    endlocal
-    exit /b
 
 :createDesktopDirFolders
     setlocal EnableDelayedExpansion
 
-    set userAnswer=
-    call %cliCmd% prompt "If you want to install packages, please give the desktop folders config path: "
-    if "%userAnswer%" == "" (
-        call %cliCmd% success "No chocolatey config path given"
-    ) else (
-        call %cliCmd% processing "Creating desktop folders from config file ^!userAnswer^!"
-        if exist !userAnswer! (
-            for /F "skip=1 tokens=1-2 delims=," %%a in ("%1") do (
-                set name=%%a
-                set icon=%%b
-                call :createDesktopFolder "^!name^!",!icon!
-            )
-            call %cliCmd% success "Creation of desktop folders is done"
-        ) else (
-            call %cliCmd% error "Config file ^!userAnswer^! does not exist"
-        )
+    set configPath=
+    call %configCmd% useConfig "desktop-folders" %1
+
+    call %cliCmd% processing "Creating desktop folders from config file ^!configPath^!"
+    set unsafeConfigPath=%configPath:"=%
+    for /F "skip=1 tokens=1-2 delims=," %%a in (%unsafeConfigPath%) do (
+        set name=%%a
+        set icon=%%b
+        call :createDesktopFolder "^!name^!",!icon!
     )
+    call %cliCmd% success "Creation of desktop folders is done"
+
     endlocal
     exit /b
 
 :createDesktopFolder
     setlocal EnableDelayedExpansion
 
-    mkdir %UserProfile%\Desktop\%1
+    set dirName=%1
+    set dirPath=%UserProfile%\Desktop\%dirName%
+    set icon=%1
+
+    if not exist %dirPath% (
+        mkdir %dirPath%
+    )
+    
     (
         echo [.ShellClassInfo]
-        echo IconResource=C:\WINDOWS\System32\SHELL32.dll,%2
+        echo IconResource=C:\WINDOWS\System32\SHELL32.dll,%icon%
         echo [ViewState]
         echo Mode=
         echo Vid=
         echo FolderType=Generic
-    ) > %UserProfile%\Desktop\%1\desktop.ini
-    attrib +r %UserProfile%\Desktop\%1
-    attrib +s +h %UserProfile%\Desktop\%1\desktop.ini
+    ) > %dirPath%\desktop.ini
+
+    attrib +r %dirPath%
+    attrib +s +h %dirPath%\desktop.ini
 
     endlocal
     exit /b
