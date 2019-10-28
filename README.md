@@ -26,9 +26,22 @@ powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "Set-Ex
 
 # Features
 
+## Configuration
+
+By default these [configuration files](src/config) are used
+
+You can provide configuration directory to you your custom configuration files.
+To be used, these files must have the same name & format as default configuration files 
+
+For each features requiring a configuration file, you can choose which file you want to use.
+
 ## Drivers update
 
 Helping to updtate drivers through [Driver cloud](https://www.driverscloud.com/)
+
+## Win10-Initial-Setup-Script 
+
+Executes [Win10-Initial-Setup-Script](https://github.com/Disassembler0/Win10-Initial-Setup-Script/) with given [config](src/config/initial-setup.config)
 
 ## Uninstall useless softwares
 
@@ -41,31 +54,15 @@ Helping to delete useless startup entries
 ## Chocolatey installation
 
 * Installs [Chocolatey](https://chocolatey.org/).
-* Installs Chocolatey packages from given [package config](https://chocolatey.org/docs/commandsinstall#packagesconfig).
-  Example: `chocolatey-packages.config`
-  ```xml
-  <?xml version="1.0" encoding="utf-8"?>
-  <packages>
-    <package id="ccleaner" />
-    <package id="vscode" packageParameters="/NoDesktopIcon /NoQuicklaunchIcon" />
-  </packages>
-  ```
+* Installs Chocolatey packages from given [package config](src/config/chocolatey.config). \
+Docs for packages config format: https://chocolatey.org/docs/commandsinstall#packagesconfig.
 
 ## Customization of UI
 
-### Enabling Dark mode
-### Enabling the display of file extensions
 ### Create desktop folders
 
-Creates some desktop folders (for tidying up) from given config
+Creates some desktop folders (for tidying up) from given [config](src/config/desktop-folders.config)
 
-Example: `desktop-folders.config`
-```csv
-Name,Icon
-Browsers,14
-Dev,93
-Multimedia,115
-```
 ### Creates desktop "Maintenance" shortcut
 
 Creates a shortcup that execute:
@@ -79,6 +76,10 @@ Creates a shortcup that execute:
 
 - Install extension [Settings Sync](https://marketplace.visualstudio.com/items?itemName=Shan.code-settings-sync)
 
-### Install npm global packages if npm is available
+### Install npm global packages
+
+If npm is available, global npm packages are installed from given [config](src/config/npm.config) 
 
 ## Run CCleaner if available
+
+## Restart explorer
