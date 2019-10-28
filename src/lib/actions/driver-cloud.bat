@@ -2,25 +2,17 @@ rem Driver cloud action functions
 @echo off
 
 set batdir=%~dp0
-set batfile=%0
-set cliCmd=%batdir%cli.bat
+set cliCmd=%batdir%../utils/cli.bat
 
 set driverCloudUrl=https://www.driverscloud.com/plugins/DriversCloud_Win.exe
 set driverCloudExe="%programfiles%\DriversCloud.com\DriversCloud.exe"
 set driverCloudUninstall="%AllUsersProfile%\Microsoft\Windows\Start Menu\Programs\DriversCloud.com\Desinstaller.lnk"
 set tmpDrivercloud="%Tmp%\DriversCloud_Win.exe"
 
-if "%~1" neq "" (
-  2>nul >nul findstr /rc:"^ *:%~1\>" "%~f0" && (
-    shift /1
-    goto %1
-  ) || (
-    >&2 call %cliCmd% fatalError "Function %~1 not found in %batfile%"
-  )
-) else >&2 call %cliCmd% fatalError "No function name was given to %batfile%"
+goto execute
 exit /b
 
-:executeDriverCloud
+:execute
     setlocal EnableDelayedExpansion
 
     for %%X in (%driverCloudExe%) do (set driverCloudFound=%%~$PATH:X)

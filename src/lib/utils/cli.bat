@@ -39,26 +39,29 @@ exit /b
     pause >nul
     exit /b
 
-
 :processing
     set "message=%~1"
     set "message=[94m^>^>^>[0m %message%..."
-    echo %message%&exit /b
+    echo %message%
+    exit /b
 
 :success
     set "message=%~1"
     set "message=[92m[x][0m %message%!"
-    echo %message%&exit /b
+    echo %message%
+    exit /b
 
 :info
     set "message=%~1"
     set "message=[93m[-][0m %message%"
-    echo %message%&exit /b
+    echo %message%
+    exit /b
 
 :error
     set "message=%~1"
     set "message=[91m/^!^\ %message% [0m"
-    echo.&echo %message%&echo.&exit /b
+    echo.&echo %message%&echo.
+    exit /b
 
 :fatalError
     set "message=%~1"
@@ -71,7 +74,7 @@ exit /b
     echo.
     set "question=[94m?>[0m %~1"
     set /P userAnswer=^!question^!
-    exit /b 0
+    exit /b
 
 :confirmPrompt
     setlocal EnableDelayedExpansion
@@ -158,7 +161,7 @@ exit /b
     if not "%userAnswer%" == "" (
         if not exist %userAnswer%\nul (
             set safePath="%userAnswer%"
-            call :Error "Given path ^!safePath^! is not a directory"
+            call :error "Given path ^!safePath^! is not a directory"
             endLocal
             set errorlevel=
             set userAnswer=
@@ -174,10 +177,13 @@ exit /b
 
     set command=%~1
 
+    set errorlevel=
     where ^!command^! >nul 2>nul
+    set cmdExists=!errorlevel!
+    set errorlevel=
 
     endLocal
-    exit /b %ERRORLEVEL%
+    exit /b %cmdExists%
 
 :execCmd
     @echo off
@@ -185,8 +191,9 @@ exit /b
 
     set "command=%~1"
 
+    set errorlevel=
     !command!
-    if !ERRORLEVEL! neq 0 (
+    if !errorlevel! neq 0 (
         endLocal
         echo Press any key to exit...
         pause >nul
@@ -199,8 +206,9 @@ exit /b
     @echo off
     setlocal EnableDelayedExpansion
 
+    set errorlevel=
     powershell -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command %1
-    if !ERRORLEVEL! neq 0 (
+    if !errorlevel! neq 0 (
         endLocal
         echo Press any key to exit...
         pause >nul
@@ -221,6 +229,13 @@ exit /b
     if not exist "!dir!" mkdir "!dir!"
     endLocal
     exit /b
+
+:restartExplorer
+    call :processing "Restarting explorer"
+    call :execPowershellCmd "Stop-Process -ProcessName explorer"
+    call :success "Explorer has been restarted"
+    exit /b
+
 :halt
 call :haltHelper 2> nul
 

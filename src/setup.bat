@@ -2,15 +2,14 @@
 cls
 
 set batdir=%~dp0
-set cliCmd=%batdir%lib\cli.bat
-set initialSetup=%batdir%lib\initial-setup.bat
-set optimizerCmd=%batdir%lib\optimizer.bat
-set cleanerCmd=%batdir%lib\cleaner.bat
-set driverCloudCmd=%batdir%lib\driver-cloud.bat
-set chocolateyCmd=%batdir%lib\chocolatey.bat
-set interfaceCmd=%batdir%lib\interface.bat
-set nodejsCmd=%batdir%lib\nodejs.bat
-set vscodeCmd=%batdir%lib\vscode.bat
+set cliCmd=%batdir%lib\utils\cli.bat
+set initialSetup=%batdir%lib\actions\initial-setup.bat
+set optimizerCmd=%batdir%lib\actions\optimizer.bat
+set cleanerCmd=%batdir%lib\actions\cleaner.bat
+set driverCloudCmd=%batdir%lib\actions\driver-cloud.bat
+set chocolateyCmd=%batdir%lib\actions\chocolatey.bat
+set interfaceCmd=%batdir%lib\actions\interface.bat
+set devCmd=%batdir%lib\actions\dev.bat
 
 rem Print banner
 call %cliCmd% banner
@@ -32,14 +31,14 @@ rem Run Driver Cloud update
 set errorlevel=
 call %cliCmd% confirmPrompt "You should update your drivers, do you want to run Driver Cloud"
 if %errorlevel% equ 0 (
-    call %driverCloudCmd% executeDriverCloud
+    call %driverCloudCmd%
 )
 
 rem Execute initial setup
 set errorlevel=
 call %cliCmd% confirmPrompt "Do you want to execute initial setup"
 if %errorlevel% equ 0 (
-    call %initialSetup% executeInitialSetup %configDir%
+    call %initialSetup% %configDir%
 )
 
 rem Execute optimizer
@@ -70,57 +69,22 @@ call %cliCmd% section "Package manager (Chocolatey)"
 set errorlevel=
 call %cliCmd% confirmPrompt "Do you want to install Chocolatey packages"
 if %errorlevel% equ 0 (
-    call %chocolateyCmd% executeChocolatey %configDir%
+    call %chocolateyCmd% %configDir%
 )
 
 rem Customization of UI
 call %cliCmd% section "Customize interface"
+call %interfaceCmd%
 
-rem Create desktop folders
-set errorlevel=
-call %cliCmd% confirmPrompt "Do you want to create desktop folders"
-if %errorlevel% equ 0 (
-    call %interfaceCmd% createDesktopDirFolders %configDir%
-)
-
-rem Create desktop "Maintenance" shortcut
-set errorlevel=
-call %cliCmd% confirmPrompt "Do you want to create a 'Maintenance' shortcut"
-if %errorlevel% equ 0 (
-    call %interfaceCmd% createMaintenanceShortcut
-)
-
+rem Dev configuration
 call %cliCmd% section "Dev configuration"
-
-rem configure VSCode
-set errorlevel=
-call %vscodeCmd% vscodeExists
-if %errorlevel% equ 0 (
-
-    set errorlevel=
-    call %cliCmd% confirmPrompt "Do you want to configure VSCode"
-    if %errorlevel% equ 0 (
-        call %vscodeCmd% configureVSCode
-    )
-)
-
-rem Add npm global packages if npm is available
-set errorlevel=
-call %nodejsCmd% npmExists
-if %errorlevel% equ 0 (
-
-    set errorlevel=
-    call %cliCmd% confirmPrompt "Do you want to install npm global packages"
-    if %errorlevel% equ 0 (
-        call %nodejsCmd% installGlobalNpmPackages %configDir%
-    )
-)
+call %devCmd%
 
 rem Run CCleaner if available
 call %cleanerCmd% executeCCleaner
 
 rem restart explorer
-call %interfaceCmd% restartExplorer
+call %cliCmd% restartExplorer
 
 rem End of setup
 echo.

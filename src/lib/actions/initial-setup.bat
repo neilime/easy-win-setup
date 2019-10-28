@@ -12,19 +12,28 @@ set "initialSetupSourcePath=%initialSetupPath%Win10-Initial-Setup-Script-%initia
 set "initialSetupExePath=%initialSetupSourcePath%Win10.ps1"
 
 set batdir=%~dp0
-set batfile=%0
-set cliCmd=%batdir%cli.bat
-set configCmd=%batdir%config.bat
+set cliCmd=%batdir%../utils/cli.bat
+set configCmd=%batdir%../utils/config.bat
 
-if "%~1" neq "" (
-  2>nul >nul findstr /rc:"^ *:%~1\>" "%~f0" && (
-    shift /1
-    goto %1
-  ) || (
-    >&2 call %cliCmd% fatalError "Function %~1 not found in %batfile%"
-  )
-) else >&2 call %cliCmd% fatalError "No function name was given to %batfile%"
+goto execute
 exit /b
+
+:execute
+    set "initialSetupExe="
+    call :getInitialSetupExe
+
+    if not defined initialSetupExe (      
+        call :installInitialSetup        
+    )
+
+    set configPath=
+    call %configCmd% useConfig "initial-setup" %1
+
+    call %cliCmd% processing "Execute Initial setup"
+    powershell -NoProfile -ExecutionPolicy Bypass -File %initialSetupExe% -include %initialSetupSourcePath%Win10.psm1 -preset %configPath%
+    call %cliCmd% success "Initial setup execution is done"
+
+    exit /b
 
 :getInitialSetupExe
     rem Check if optimizer exe exists
@@ -51,20 +60,3 @@ exit /b
     call %cliCmd% execPowershellCmd "Expand-Archive -Path '^!initialSetupDownloadPath^!' -DestinationPath '^!initialSetupPath^!'" >nul
     call %cliCmd% success "Unziping Win10-Initial-Setup-Script is done"
     exit /b 0
-
-:executeInitialSetup
-    set "initialSetupExe="
-    call :getInitialSetupExe
-
-    if not defined initialSetupExe (      
-        call :installInitialSetup        
-    )
-
-    set configPath=
-    call %configCmd% useConfig "initial-setup" %1
-
-    call %cliCmd% processing "Execute Initial setup"
-    powershell -NoProfile -ExecutionPolicy Bypass -File %initialSetupExe% -include %initialSetupSourcePath%Win10.psm1 -preset %configPath%
-    call %cliCmd% success "Initial setup execution is done"
-
-    exit /b

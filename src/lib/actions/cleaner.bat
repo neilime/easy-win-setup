@@ -3,7 +3,7 @@ rem Cleaner action functions
 
 set batdir=%~dp0
 set batfile=%0
-set cliCmd=%batdir%cli.bat
+set cliCmd=%batdir%../utils/cli.bat
 set ccleanerExePath="%programfiles%\CCleaner\ccleaner.exe"
 
 if "%~1" neq "" (
@@ -120,7 +120,7 @@ exit /b
     if defined ccleanerExe (
         echo.
         call %cliCmd% processing "Running CCleaner auto clean"
-        call %cliCmd% execCmd "^!ccleanerExe^! /AUTO"
+        call %cliCmd% execCmd "!ccleanerExe! /AUTO"
         call %cliCmd% success "CCleaner auto clean is done"
     )
     exit /b

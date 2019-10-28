@@ -2,22 +2,14 @@ rem Chocolatey action functions
 @echo off
 
 set batdir=%~dp0
-set batfile=%0
-set cliCmd=%batdir%cli.bat
-set configCmd=%batdir%config.bat
+set cliCmd=%batdir%../utils/cli.bat
+set configCmd=%batdir%../utils/config.bat
 set chocolateyInstallUrl=https://chocolatey.org/install.ps1
 
-if "%~1" neq "" (
-  2>nul >nul findstr /rc:"^ *:%~1\>" "%~f0" && (
-    shift /1
-    goto %1
-  ) || (
-    >&2 call %cliCmd% fatalError "Function %~1 not found in %batfile%"
-  )
-) else >&2 call %cliCmd% fatalError "No function name was given to %batfile%"
+goto execute
 exit /b
 
-:executeChocolatey
+:execute
     setlocal EnableDelayedExpansion
 
     call %cliCmd% processing "Checking if Chocolatey is installed"

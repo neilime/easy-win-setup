@@ -3,7 +3,7 @@ rem Optimizer action functions
 
 set batdir=%~dp0
 set batfile=%0
-set cliCmd=%batdir%cli.bat
+set cliCmd=%batdir%../utils/cli.bat
 set optimizerConfigPath="%batdir%\..\config\windows10.conf"
 set optimizerExePath="%tmp%\Optimizer.exe"
 
