@@ -50,9 +50,6 @@ exit /b
     call %cliCmd% processing "Downloading Win10-Initial-Setup-Script version %initialSetupVersion%"
     call %cliCmd% safeMkdir "^!initialSetupPath^!"
 
-    call %cliCmd% processing "^!initialSetupUrl^!"
-    call %cliCmd% processing "^!initialSetupDownloadPath^!"
-
     call %cliCmd% execPowershellCmd "(New-Object System.Net.WebClient).DownloadFile('^!initialSetupUrl^!', '^!initialSetupDownloadPath^!')"
     call %cliCmd% success "Download of Win10-Initial-Setup-Script is done"
 
