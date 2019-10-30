@@ -2,8 +2,8 @@
   <a href="https://github.com/neilime/easy-win-setup" target="_blank"><img src="resources/banner.jpg" width="600"></a>
 </p>
 
-![Downloads](https://img.shields.io/github/downloads/neilime/easy-win-setup/total)
-![GitHub stars](https://img.shields.io/github/stars/neilime/easy-win-setup)
+[![Downloads](https://img.shields.io/github/downloads/neilime/easy-win-setup/total)](https://github.com/neilime/easy-win-setup/releases)
+[![GitHub stars](https://img.shields.io/github/stars/neilime/easy-win-setup)](https://github.com/neilime/easy-win-setup)
 [![License](https://img.shields.io/github/license/neilime/easy-win-setup)](https://github.com/neilime/easy-win-setup/blob/master/LICENSE)
 [![Sponsor](https://img.shields.io/badge/%E2%9D%A4-Sponsor-ff69b4)](https://github.com/sponsors/neilime) 
 
