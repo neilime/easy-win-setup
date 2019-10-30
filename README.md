@@ -1,11 +1,18 @@
 <p align="center">
   <a href="https://github.com/neilime/easy-win-setup" target="_blank"><img src="resources/banner.jpg" width="600"></a>
-  <br/><br/>
 </p>
+
+![Downloads](https://img.shields.io/github/downloads/neilime/easy-win-setup/total)
+[![License](https://img.shields.io/github/license/neilime/easy-win-setup)](https://github.com/neilime/easy-win-setup/blob/master/LICENSE)
+[![Sponsor](https://img.shields.io/badge/%E2%9D%A4-Sponsor-ff69b4)](https://github.com/sponsors/neilime) 
 
 # Summary
 
 📢 Portable utility to setup and configure Windows
+
+# Helping Project
+
+❤️ If this project helps you reduce time to develop and/or you want to help the maintainer of this project. You can [sponsor](https://github.com/sponsors/neilime) him. Thank you !
 
 # Contributing
 
