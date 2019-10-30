@@ -13,14 +13,13 @@ exit /b
     setlocal EnableDelayedExpansion
 
     call %cliCmd% processing "Checking if Chocolatey is installed"
+    
+    set errorlevel=
     call %cliCmd% cmdExists "choco"
-    if %ERRORLEVEL% equ 0 (
+    if !errorlevel! equ 0 (
         call %cliCmd% success "Chocolatey is already installed"
     ) else (
-        call %cliCmd% processing "Installing Chocolatey"
-        call %cliCmd% execPowershellCmd "iex ((New-Object System.Net.WebClient).DownloadString('%chocolateyInstallUrl%'))"
-        SET PATH="%PATH%;%ALLUSERSPROFILE%\chocolatey\bin\"
-        call %cliCmd% success "Chocolatey has been installed"
+       call :installChocolatey
     )
 
     set configPath=
@@ -34,3 +33,12 @@ exit /b
 
     endlocal
     exit /b
+
+:installChocolatey
+    setlocal EnableDelayedExpansion
+    call %cliCmd% processing "Installing Chocolatey"
+    call %cliCmd% execPowershellCmd "iex ((New-Object System.Net.WebClient).DownloadString('%chocolateyInstallUrl%'))"
+    set PATH="%PATH%;%ALLUSERSPROFILE%\chocolatey\bin\"
+    call %cliCmd% success "Chocolatey has been installed"
+    endlocal
+    exit /b 0
