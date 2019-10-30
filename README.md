@@ -4,8 +4,8 @@
 
 [![Downloads](https://img.shields.io/github/downloads/neilime/easy-win-setup/total)](https://github.com/neilime/easy-win-setup/releases)
 [![GitHub stars](https://img.shields.io/github/stars/neilime/easy-win-setup)](https://github.com/neilime/easy-win-setup)
-[![License](https://img.shields.io/github/license/neilime/easy-win-setup)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![License](https://img.shields.io/github/license/neilime/easy-win-setup)](https://github.com/neilime/easy-win-setup/blob/master/LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/neilime/easy-win-setup/blob/master/CONTRIBUTING.md)
 [![Sponsor](https://img.shields.io/badge/%E2%9D%A4-Sponsor-ff69b4)](https://github.com/sponsors/neilime) 
 
 # Summary
@@ -14,11 +14,14 @@
 
 # Helping Project
 
-❤️ If this project helps you reduce time to develop and/or you want to help the maintainer of this project. You can [sponsor](https://github.com/sponsors/neilime) him. Thank you !
+❤️ If this project helps you reduce time to develop and/or you want to help the maintainer of this project. You can [sponsor](https://github.com/sponsors/neilime) him. Thank you!
 
 # Contributing
 
-👍 If you wish to contribute to this project, don't hesitate, I'll review any PR.
+
+# Contributing
+
+👍 If you wish to contribute to TwbsHelper, PRs are welcome! Please read the [https://github.com/neilime/easy-win-setup/blob/master/CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 # Get started
 
