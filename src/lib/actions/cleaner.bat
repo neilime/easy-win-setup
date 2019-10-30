@@ -5,6 +5,7 @@ set batdir=%~dp0
 set batfile=%0
 set cliCmd=%batdir%../utils/cli.bat
 set ccleanerExePath="%programfiles%\CCleaner\ccleaner.exe"
+set ccleanerExe64Path="%programfiles%\CCleaner\ccleaner64.exe"
 
 if "%~1" neq "" (
   2>nul >nul findstr /rc:"^ *:%~1\>" "%~f0" && (
@@ -109,9 +110,14 @@ exit /b
     if defined ccleanerFound (
         set ccleanerExe="%ccleanerFound%"
         exit /b 0
-    ) else (
-        exit /b 4
     )
+
+    for %%X in (%ccleanerExe64Path%) do (set ccleanerFound=%%~$PATH:X)
+    if defined ccleanerFound (
+        set ccleanerExe="%ccleanerFound%"
+        exit /b 0
+    )
+    exit /b 4
 
 :executeCCleaner
     set "ccleanerExe="

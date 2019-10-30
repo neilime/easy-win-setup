@@ -28,6 +28,7 @@ exit /b
     rem Install Chocolatey packages
     call %cliCmd% processing "Installing Chocolatey packages from config file ^!configPath^!"
     call %cliCmd% execCmd "choco install --confirm --packages ^!configPath^!"
+    refreshenv
     echo .
     call %cliCmd% success "Installation of Chocolatey packages is done"
 
@@ -41,4 +42,12 @@ exit /b
     set PATH="%PATH%;%ALLUSERSPROFILE%\chocolatey\bin\"
     call %cliCmd% success "Chocolatey has been installed"
     endlocal
+    refreshenv
+
+    call %cliCmd% cmdExists "choco"
+    if not !errorlevel! equ 0 (
+        call %cliCmd% success "Chocolatey is already installed"
+    ) else (
+       call :installChocolatey
+    )
     exit /b 0

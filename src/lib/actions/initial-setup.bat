@@ -22,8 +22,8 @@ exit /b
     set "initialSetupExe="
     call :getInitialSetupExe
 
-    if not defined initialSetupExe (      
-        call :installInitialSetup        
+    if not defined initialSetupExe (
+        call :installInitialSetup
     )
 
     set configPath=
@@ -59,4 +59,12 @@ exit /b
     call %cliCmd% processing "Unziping Win10-Initial-Setup-Script"
     call %cliCmd% execPowershellCmd "Expand-Archive -Path '^!initialSetupDownloadPath^!' -DestinationPath '^!initialSetupPath^!'" >nul
     call %cliCmd% success "Unziping Win10-Initial-Setup-Script is done"
+    endlocal
+
+    set "initialSetupExe="
+    call :getInitialSetupExe
+    if not defined initialSetupExe (
+        call %cliCmd% fatalError "An unexpected error occured udring installation, initial setup executable file does exist"
+    )
+
     exit /b 0
