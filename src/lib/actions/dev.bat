@@ -16,6 +16,14 @@ exit /b
   set errorlevel=
   call :npmExists
   if !errorlevel! equ 0 (
+
+      set errorlevel=
+      call %cliCmd% confirmPrompt "Do you want to clean (uninstall) all existing npm global packages"
+      if %errorlevel% equ 0 (
+          call :uninstallGlobalNpmPackages
+          refreshenv
+      )
+
       set errorlevel=
       call %cliCmd% confirmPrompt "Do you want to install npm global packages"
       if !errorlevel! equ 0 (
@@ -47,13 +55,27 @@ exit /b
     endLocal
     exit /b %npmExists%
 
+:uninstallGlobalNpmPackages
+    setlocal EnableDelayedExpansion
+
+    call %cliCmd% processing "Uninstalling all NPM global packages"
+
+    call %cliCmd% execCmd "rmdir /s /q %appdata%\npm"
+    call %cliCmd% safeMkdir "%appdata%\npm"
+
+    call %cliCmd% execCmd "rmdir /s /q %appdata%\npm-cache"
+    call %cliCmd% safeMkdir "%appdata%\npm-cache"
+
+    call %cliCmd% success "Uninstalling all NPM global packages is done"
+
+    endlocal
+    exit /b
 
 :installGlobalNpmPackages
     setlocal EnableDelayedExpansion
     
     set configPath=
     call %configCmd% useConfig "npm" %1
-    
 
     call %cliCmd% processing "Installing NPM global packages from config file ^!configPath^!"
     set unsafeConfigPath=%configPath:"=%

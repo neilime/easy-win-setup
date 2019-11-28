@@ -18,6 +18,14 @@ exit /b
     call %cliCmd% cmdExists "choco"
     if !errorlevel! equ 0 (
         call %cliCmd% success "Chocolatey is already installed"
+
+        set errorlevel=
+        call %cliCmd% confirmPrompt "Do you want to clean (uninstall) all existing packages"
+        if %errorlevel% equ 0 (
+            call %cliCmd% execCmd "choco uninstall all --confirm"
+            refreshenv
+        )
+
     ) else (
        call :installChocolatey
     )
