@@ -21,7 +21,7 @@
 
 # Contributing
 
-👍 If you wish to contribute to TwbsHelper, PRs are welcome! Please read the [https://github.com/neilime/easy-win-setup/blob/master/CONTRIBUTING.md](CONTRIBUTING.md) file.
+👍 If you wish to contribute to EasyWinSetup, PRs are welcome! Please read the [https://github.com/neilime/easy-win-setup/blob/master/CONTRIBUTING.md](CONTRIBUTING.md) file.
 
 # Get started
 
